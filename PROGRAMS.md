@@ -6,3 +6,4 @@ Concrete suggestions:
 
 
 https://github.com/smagurauskas/software-engineering
+https://github.com/niku-live/PSI2024
