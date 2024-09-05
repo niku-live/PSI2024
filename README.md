@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This repository contains code examples and documentation you will see during practice lectures (2023 Fall).  
+This repository contains code examples and documentation you will see during practice lectures (2024 Fall).  
 
 All examples are provided as is and is intended only for learning purposes. Some examples are intended to display "bad code" or "bad practices", others might be correct but provide overly simplified solutions so **never** use provided examples as a production ready code (as it really is not production ready).
 
