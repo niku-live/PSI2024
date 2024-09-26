@@ -1,0 +1,258 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
+#!markdown
+
+# Deadline 1 - Checklist
+
+#!markdown
+
+Deadline is at 2024-10-17 20:00 EEST
+
+- Maximum points if completed by deadline: **1.5**
+- Maximum points if completed by 2043-10-10: **1.5 + 0.075**
+- Maximum points if completed by 2043-10-03: **1.5 + 0.15**
+
+#!markdown
+
+## Presentation
+
+#!markdown
+
+- You prepared an actual presentation (slides + working app demo) and are ready to present it loud before every other team.
+- Every team member can present by himself about tasks he did. It is expected that after presentation (or during presentation) every team member will talk.
+- You can present in your code every implemented requirement.
+
+#!markdown
+
+## Goals
+
+#!markdown
+
+### Official goal: to develop an **web** application using the material covered in 1-6 lectures.
+
+#!markdown
+
+- You have a **working** (alpha) version of your app.
+- It is a web-based application which:
+  - Has functional UI (front-end)
+  - Has API (back-end)
+  - Front-end has calls to API and they are meaninful.
+  - API is implemented in C#
+  - UI can be implemented in C# or well-known Javascript/Typescript framework
+  - Code distribution between Front-end and back-end is around 50/50.
+- You worked as a team.
+- You have cooperation proofs (code, commit, pull requests, working app, UI design pictures and etc.)
+- Your app implementation uses material from 1-6 lectures.
+- **Every** team member knows and understands material covered in 1-6 lectures.
+
+#!markdown
+
+### goal: to develop an app in ASP.NET, that has basic functionality of assigned APP. Understand the usage of GitHub, coding in team principles. Prepare foundation for future work. Learn to code review yourself and take the feedback when getting one.
+
+#!markdown
+
+- Your app has **working** UI.
+- Your app is functional (has at least some kind of working and **usable** functionality). Non-functional requirements (like for example security) do no contribute to word "functional".
+- You have a GitHub repository (and I have access to it)
+- Your teamwork is represented in your repository (commits from all team members, pull requests and other cooperation proofs)
+- You worked using pull requests, your team members commented on your PR (and a least some of the comments required changes, not just "looks good" type of comments), no direct changes on main/master branch.
+- **Every** team member used git, made commits, created pull requests, commented on pull requests.
+
+#!markdown
+
+## Requirements
+
+#!markdown
+
+### Application can be interacted with using *some* sort of interface
+
+#!markdown
+
+- Application has user interface (it is not just an API or some console hacker-ish app)
+- Interface is interactive (user can press some elements and get some results)
+- Application is functional (at lest some functions works fully)
+
+#!markdown
+
+### Creating and using your own class, struct, record and enum;
+
+#!markdown
+
+- Your app contains at least one **meaningfully** used your own (non-standard) class
+- Your app contains at least one **meaningfully** used your own (non-standard) struct
+- Your app contains at least one **meaningfully** used your own (non-standard) record
+- Your app contains at least one **meaningfully** used your own (non-standard) enum
+- **Every** team member can point in your code class, struct, record and enum + usage of them; can explain why it was implemented like that.
+- **Every** team member knows differences between class, struct and record, how to implement both
+- **Every** team member knows what is enum, how to implement it
+- **Every** team member knows what is enum with flags, how to implement it
+
+
+Useful docs:
+- [Choosing Between Class and Struct](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/choosing-between-class-and-struct)
+- [Structure types](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/struct)
+- [Enumeration types](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/enum)
+- [Class types](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/class)
+- [Record types](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/tutorials/records)
+
+#!markdown
+
+### Property usage in struct and class
+
+#!markdown
+
+- Your app contains at least one **meaningfully** used property in class
+- Your app contains at least one **meaningfully** used property in struct
+- **Every** team member can point in your code properties; explain why it was implemented like that.
+- **Every** team member knows all types of properties (normal property, auto-implemented property, indexer); can implement them on-site.
+
+Useful docs:
+- [Properties](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/properties)
+- [Indexers](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/indexers/)
+
+#!csharp
+
+//This is not meanningful usage of standard property:
+
+class Test
+{
+    private int _somePropertyBackingField = 0;
+    public int SomeProperty { get { return _somePropertyBackingField; } set { _somePropertyBackingField = value; }}
+}
+
+#!csharp
+
+class Test
+{
+    public int SomeProperty { get; set; }
+}
+
+#!csharp
+
+//This is kinda meanningful usage of standard property:
+
+class Test
+{
+    private int _somePropertyBackingField = 0;
+    public int SomeProperty { get { return _somePropertyBackingField; } set { _somePropertyBackingField = value; OnPropertyChanged(value); }}
+
+    private void OnPropertyChanged(int newValue)
+    {
+        //Some tests
+    }
+}
+
+#!markdown
+
+### Named and optional argument usage
+
+#!markdown
+
+- Your app contains at least one **meaningfully** used named argument
+- Your app contains at least one **meaningfully** used optional argument
+- **Every** team member can point in your code named and optional argument usage; explain why it was implemented like that.
+- **Every** team member knows the meaning behind named and optional arguments, can implement them on-site.
+
+Useful docs:
+- [Named and optional arguments](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/named-and-optional-arguments)
+
+#!markdown
+
+### Extension method usage
+
+#!markdown
+
+- Your app contains at least one **meaningfully** used extension method
+- **Every** team member can point in your code extension method and its usage; explain why it was implemented like that.
+- **Every** team member knows and can implement and use extension method on-site.
+
+Note:
+- Using extension method on your own class usually is not a meaningful usage (you can just add method directly to your class, you own the code)
+
+Useful docs:
+- [Extension methods](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/extension-methods)
+
+#!markdown
+
+### Iterating through collection the right way
+
+#!markdown
+
+- Your app contains at least one **meaningfully** used iteration through collection.
+- Iteration is performed using recommended methods.
+- **Every** team member can point in your code extension method and its usage; explain why it was implemented like that.
+- **Every** team member knows and can implement and use extension method on-site.
+
+Useful docs:
+- [C# Collection](https://www.functionx.com/csharp40/collections/Lesson02.htm)
+
+#!markdown
+
+### Using a stream to load data (can be from file, web service, socket etc.)
+
+#!markdown
+
+- Your app contains at least one **meaningfully** used stream reading operation.
+- Stream reading is implemented with using operator.
+- **Every** team member can point in your code where stream reading happens; explain why it was implemented like that.
+- **Every** team member knows and can implement stream reading on-site.
+- **Every** team member knows and can use streams, stream readers, using operator.
+
+Note:
+- While simplest file reading can be implemented using File.ReadAllText method, but for learning purpoise you should use streams and using operator (or at least understand what that is)
+
+Useful docs:
+- [Reading from file](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/file-system/how-to-read-from-a-text-file)
+- [Using statement](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/using-statement)
+- [About different file access APIs](https://devblogs.microsoft.com/dotnet/the-convenience-of-dotnet/)
+
+#!markdown
+
+### Boxing and unboxing
+
+#!markdown
+
+- Boxing/unboxing is not used blindly and only in places where it is needed;
+- **Every** team member can point in your code where type boxing/unboxing happens; explain why it was implemented like that.
+- **Every** team member knows how to what boxing/unboxing is; can implement this on-site.
+
+Useful docs:
+- [Boxing/unboxing](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/types/boxing-and-unboxing)
+
+#!markdown
+
+### LINQ to Objects usage (methods or queries);
+
+#!markdown
+
+- Your app contains at least one **meaningfully** used LINQ to Objects (query syntax)
+- **Or** your app contains at least one **meaningfully** used LINQ to Objects (methods)
+- **Every** team member can point in your code where type LINQ to Objecs is used; explain why it was implemented like that.
+- **Every** team member knows and can use LINQ to objecs both using query syntax and methods; can implement this on-site.
+
+Note:
+- While LINQ to SQL (and LINQ to Entity objects) uses the same syntax it is not LINQ to objects. You are using LINQ to Objects when you query collections (like list, dictionary) or other normal objects (like string). When you query entity framework objects your query is transformed into SQL sentence.
+
+Useful docs:
+- [LINQ to Objects](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/linq-to-objects)
+- [Basic LINQ Query Operations](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/basic-linq-query-operations)
+
+#!markdown
+
+### Implementing at least one of the standard .NET interfaces (IEnumerable, IComparable, IComparer, IEquatable, IEnumerator, etc.)
+
+#!markdown
+
+- Your app contains at least one **meaningfully** used standard .NET interface
+- **Every** team member can point in your code where standard interfaces are used; explain why it was implemented like that.
+- **Every** team member knows and can use IComparable/IComparer/IEquatable interfaces; can implement this on-site.
+- **Every** team member knows and can use IEnumerator/IEnumerable interfaces; can implement this on-site.
+
+Useful docs:
+- [IEquatable](https://learn.microsoft.com/en-us/dotnet/api/system.iequatable-1?view=net-7.0)
+- [IComparable](https://learn.microsoft.com/en-us/dotnet/api/system.icomparable-1?view=net-6.0)
+- [IComparer](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.icomparer-1?view=net-6.0)
+- [IEnumerator](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerator-1?view=net-6.0)
+- [IEnumerable](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=net-7.0)
