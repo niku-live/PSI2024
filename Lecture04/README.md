@@ -2,4 +2,4 @@
 
 ## What was discussed
 
-- [Deadline 1 Checklist](Checklist/Checklist.dib)
+- [Deadline 1 Checklist](Checklist/Checklist.ipynb)
