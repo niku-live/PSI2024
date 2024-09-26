@@ -25,3 +25,6 @@ All code examples should also work without any problems using Visual Studio Code
 ## Lectures
 
 - [Lecture 01](Lecture01/README.md)
+- Lecture 02
+- Lecture 03
+- [Lecture 04](Lecture04/README.md)
