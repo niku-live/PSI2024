@@ -1,0 +1,112 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
+#!markdown
+
+# Enums
+
+#!markdown
+
+### Simple Enum
+
+#!csharp
+
+enum WeekDay
+{
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+    Sunday
+}
+
+#!csharp
+
+display("");
+WeekDay day = WeekDay.Monday;
+Console.WriteLine(day);
+
+day = WeekDay.Thursday;
+Console.WriteLine(day);
+
+day = (WeekDay)4;
+Console.WriteLine(day);
+
+day = WeekDay.Tuesday;
+Console.WriteLine((int)day);
+
+Console.WriteLine(day == WeekDay.Tuesday);
+
+#!markdown
+
+### Simple enum with assigned values
+
+#!csharp
+
+enum WeekDay
+{
+    Monday = 1,
+    Tuesday = 2,
+    Wednesday = 3,
+    Thursday = 4,
+    Friday = 5,
+    Saturday = 6,
+    Sunday = 7
+}
+
+#!csharp
+
+display("");
+WeekDay day = WeekDay.Monday;
+Console.WriteLine(day);
+
+day = WeekDay.Thursday;
+Console.WriteLine(day);
+
+day = (WeekDay)4;
+Console.WriteLine(day);
+
+day = WeekDay.Tuesday;
+Console.WriteLine((int)day);
+
+Console.WriteLine(day == WeekDay.Tuesday);
+
+#!markdown
+
+### Enum with flags
+
+#!csharp
+
+[Flags]
+public enum CarOptions
+{
+    // The flag for SunRoof is 0001.
+    SunRoof = 0x01,
+    // The flag for Spoiler is 0010.
+    Spoiler = 0x02,
+    // The flag for FogLights is 0100.
+    FogLights = 0x04,
+    // The flag for TintedWindows is 1000.
+    TintedWindows = 0x08,
+    SpoilerAndSunRoof = 0x01 | 0x02
+}
+
+#!csharp
+
+// The bitwise OR of 0001 and 0100 is 0101.
+CarOptions options = CarOptions.SunRoof | CarOptions.FogLights;
+
+// Because the Flags attribute is specified, Console.WriteLine displays 
+// the name of each enum element that corresponds to a flag that has 
+// the value 1 in variable options.
+Console.WriteLine(options);
+
+// Print out the integer value of SunRoof | FogLights, which is 0101, which is 5
+Console.WriteLine((int)options);
+
+Console.WriteLine(options.HasFlag(CarOptions.SunRoof));
+Console.WriteLine(options.HasFlag(CarOptions.FogLights));
+Console.WriteLine(options.HasFlag(CarOptions.TintedWindows));
