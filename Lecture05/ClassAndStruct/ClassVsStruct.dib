@@ -1,0 +1,433 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
+#!markdown
+
+# Class vs Struct
+
+#!markdown
+
+### Reference vs Value
+
+#!csharp
+
+struct PointS
+{
+    public int X;
+    public int Y;
+}
+
+
+class PointC
+{
+    public int X;
+    public int Y;
+}
+
+#!csharp
+
+void ProcessPoint(PointS p)
+{
+    p.X = 10;
+}
+
+void ProcessPoint(PointC p)
+{
+    p.X = 10;
+}
+
+#!csharp
+
+display("");
+
+PointC pC = new PointC();
+Console.WriteLine("Initial values:");
+Console.WriteLine(pC.X);
+
+pC.X = 5;
+Console.WriteLine("After change:");
+Console.WriteLine(pC.X);
+
+ProcessPoint(pC);
+Console.WriteLine("After methods:");
+Console.WriteLine(pC.X);
+
+#!csharp
+
+display("");
+
+PointS pS = new PointS();
+Console.WriteLine("Initial values:");
+Console.WriteLine(pS.X);
+
+pS.X = 5;
+Console.WriteLine("After change:");
+Console.WriteLine(pS.X);
+
+ProcessPoint(pS);
+Console.WriteLine("After methods:");
+Console.WriteLine(pS.X);
+
+#!markdown
+
+### Struct cannot be null
+
+#!csharp
+
+PointS pSn = new PointS();
+PointC pCn = new PointC();
+
+#!csharp
+
+pCn = null;
+
+#!csharp
+
+pSn = null;
+
+#!markdown
+
+### Classes can be inherited, structs - cannot
+
+#!csharp
+
+class ExtendedPointC: PointC {}
+
+#!csharp
+
+class ExtendedPointS: PointS {}
+
+#!markdown
+
+### Struct cannot be abstract
+
+#!csharp
+
+abstract class AbstractPointC {}
+
+#!csharp
+
+abstract struct AbstractPointS {}
+
+#!markdown
+
+### Struct does not have destructor
+
+#!csharp
+
+class DestructedPointC
+{
+    ~DestructedPointC()
+    {
+    }
+}
+
+#!csharp
+
+struct DestructedPointS
+{
+    ~DestructedPointS()
+    {
+    }
+}
+
+#!markdown
+
+### In struct you can override only limited number of methods
+  - Equals()
+  - GetHashCode()
+  - GetType()
+  - ToString()
+
+#!csharp
+
+struct OverridePointS
+{
+    public int X;
+    public int Y;
+
+    public override string ToString()
+    {
+        return $"({X};{Y})";
+    }
+
+    public override bool Equals(object other)
+    {
+        return other switch
+        {
+            null => false,
+            OverridePointS otherPoint => X.Equals(otherPoint.X) && Y.Equals(otherPoint.Y),
+            _ => false
+        };
+    }
+
+    public override int GetHashCode()
+    {
+        return X * 10 + Y;
+    }
+}
+
+#!markdown
+
+### Field inicialization inside is not allowed
+
+#!csharp
+
+class FieldInitPointC
+{
+    public int X = 10;
+}
+
+#!csharp
+
+struct FieldInitPointS
+{
+    public int X = 10;
+}
+
+#!markdown
+
+### Struct cannot have not empty constructor without params ***
+
+#!csharp
+
+class EmptyConstructorPointC
+{
+    public EmptyConstructorPointC() {}
+}
+
+#!csharp
+
+struct EmptyConstructorPointS
+{
+    //Works from C# 10
+    public EmptyConstructorPointS() {}
+}
+
+#!csharp
+
+public struct CoordinatesS
+{
+    public int x, y;
+
+    public CoordinatesS(int p1, int p2)
+    {
+        x = p1;
+        y = p2;
+    }
+}
+
+public class CoordinatesC
+{
+    public int x, y;
+
+    public CoordinatesC(int p1, int p2)
+    {
+        x = p1;
+        y = p2;
+    }
+}
+
+#!csharp
+
+display("");
+// Initialization possible with empty (default) constructor:
+CoordinatesS cs1 = new CoordinatesS();
+
+Console.Write("CoOrds 1: ");  //0;0
+Console.WriteLine("x = {0}, y = {1}", cs1.x, cs1.y);
+
+#!csharp
+
+display("");
+// Initialization possible with empty (default) constructor:
+CoordinatesC cc1 = new CoordinatesC();
+
+Console.Write("CoOrds 1: ");  //0;0
+Console.WriteLine("x = {0}, y = {1}", cc1.x, cc1.y);
+
+#!csharp
+
+display("");
+//as well as with provided constructor
+CoordinatesS cs2 = new CoordinatesS(1, 1);
+
+Console.Write("CoOrds 2: ");
+Console.WriteLine("x = {0}, y = {1}", cs2.x, cs2.y);
+
+#!csharp
+
+display("");
+//as well as with provided constructor
+CoordinatesC cc2 = new CoordinatesC(1, 1);
+
+Console.Write("CoOrds 2: ");
+Console.WriteLine("x = {0}, y = {1}", cc2.x, cc2.y);
+
+#!csharp
+
+display("");
+//as well as no initialization at all:
+CoordinatesS cs3;
+
+// Initialize:
+cs3.x = 2;
+cs3.y = 2;
+
+Console.Write("CoOrds 3: ");
+Console.WriteLine("x = {0}, y = {1}", cs3.x, cs3.y);
+
+#!csharp
+
+display("");
+//as well as no initialization at all:
+CoordinatesC cc3;
+
+// Initialize:
+cc3.x = 2;
+cc3.y = 2;
+
+Console.Write("CoOrds 3: ");
+Console.WriteLine("x = {0}, y = {1}", cc3.x, cc3.y);
+
+#!markdown
+
+### Static constructor works only with classes
+
+#!csharp
+
+struct StaticConstructorS
+{
+    static StaticConstructorS()
+    {
+        Console.WriteLine("In constructor of the structure");
+    }
+}
+
+class StaticConstructorC
+{
+    static StaticConstructorC()
+    {
+        Console.WriteLine("In constructor of the class");
+    }
+}
+
+#!csharp
+
+display("");
+Console.WriteLine("Start>>");
+//nothing will be printed, since static constructor of the structure is not triggered
+StaticConstructorS s = new StaticConstructorS();
+
+//static constructor of the class is triggered always:
+StaticConstructorC c = new StaticConstructorC();
+Console.WriteLine("<<End.");
+
+#!markdown
+
+### Equals is behaving differently
+
+#!csharp
+
+struct EqualsS
+{
+    public string value;
+}
+class EqualsC
+{
+    public string value;
+}
+
+#!csharp
+
+display("");
+EqualsS str1 = new EqualsS();
+str1.value = "some wild value appears";
+
+EqualsS str2 = new EqualsS();
+str2.value = "some wild value appears";
+
+//for structs Equals compares the contents, 
+//because if the current instance is a value type, the Equals(Object) method tests for value equality
+if (str1.Equals(str2))
+{
+    Console.WriteLine("str1 = str2");
+}
+else
+{
+    Console.WriteLine("str1 != str2");
+}
+
+#!csharp
+
+display("");
+EqualsC cls1 = new EqualsC();
+cls1.value = "some another wild value appears";
+
+EqualsC cls2 = new EqualsC();
+cls2.value = "some another wild value appears";
+
+//for classes Equals compares the references,
+//Equals(Object) method is equivalent to a call to the ReferenceEquals method.
+//more about Equals: http://msdn.microsoft.com/en-us/library/bsc2ak47(v=vs.110).aspx
+if (cls1.Equals(cls2))
+{
+    Console.WriteLine("cls1 = cls2");
+}
+else
+{
+    Console.WriteLine("cls1 != cls2");
+}
+
+#!markdown
+
+## When to Use Struct
+
+#!markdown
+
+Choosing when to use struct is simple and can be broken down into four criteria:
+
+- It logically encapsulates a single value (ex. Coordinate Point)
+- It has a total instance size of under 16 bytes *
+- The data is immutable
+- It will not be boxed frequently
+
+If all of these are true then struct or record struct should be used. If not then we should use a reference type like class or record. To be clear, it is only beneficial to choose structs over classes when all the guidelines are met.
+
+Use Cases:
+- Creating lightweight data structures with value semantics.
+- Storing small sets of related data.
+- Avoiding heap allocation and reducing memory overhead.
+
+More: [Choosing Between Class and Struct](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/choosing-between-class-and-struct?redirectedfrom=MSDN)
+
+#!csharp
+
+public struct MyPoint 
+{
+    public int X; // Value Type
+    public int Y; // Value Type
+}
+
+public class MyPointWithName 
+{
+    public int X; // Value Type
+    public int Y; // Value Type
+    public string Name; // Reference Type
+}
+
+#!markdown
+
+## When to Use Record vs Class
+
+#!markdown
+
+If a structure will perform complicated behaviors and will be a large instance these are signs we should use a class. Additionally, we should consider whether we will need this structure to change after creation. If so, then class is the better choice.
+
+We should use record when we need to encapsulate data without complicated behavior (a common example of this scenario is Data Transfer Objects – DTOs). This would be a more fitting situation for records especially due to their built-in optimizations. Records are not more performant in other regards such as equality comparison.
+
+Use Cases:
+- Creating immutable data transfer objects (DTOs) for serialization and communication.
+- Implementing value-based equality and comparison.
+- Simplifying code by leveraging auto-generated methods.

@@ -1,0 +1,182 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
+#!markdown
+
+# Collections
+
+#!markdown
+
+### Generics vs Non-generics
+
+#!csharp
+
+ArrayList list1 = new ArrayList();
+
+list1.Add(1);
+list1.Add(5);
+list1.Add("test");
+list1.Add(new { Name = "A", LastName = "B"});
+list1.Add(new ArrayList());
+list1[2] = "aaaa";
+
+display(list1);
+
+#!csharp
+
+int value = list1[0];
+display(value);
+
+#!csharp
+
+int value = (int)list1[0];
+display(value);
+
+#!csharp
+
+List<int> list1 = new List<int>();
+
+list1.Add(1);
+list1.Add(5);
+
+display(list1);
+
+#!csharp
+
+list1.Add("test");
+
+#!csharp
+
+int value = list1[0];
+display(value);
+
+#!markdown
+
+### List
+
+#!csharp
+
+var list = new List<int>();
+list.Add(1);
+list.Add(5);
+list.Add(10);
+
+display(list);
+
+#!csharp
+
+var list = new List<int>() { 5, 1, 10 };
+display(list);
+
+#!csharp
+
+list.Sort();
+display(list);
+
+#!csharp
+
+display(list.Contains(5));
+display(list.Contains(10));
+display(list.Contains(3));
+
+#!csharp
+
+display(list.IndexOf(5));
+display(list.IndexOf(10));
+display(list.IndexOf(3));
+
+#!csharp
+
+list.Add(11);
+display(list);
+
+#!csharp
+
+list.Remove(5);
+display(list);
+
+#!csharp
+
+display(list.Count);
+display(list[0]);
+display(list[2]);
+
+list[0] = 8;
+display(list);
+
+#!csharp
+
+LinkedList<int> llist = new LinkedList<int>();
+llist.AddLast(1);
+llist.AddLast(5);
+
+display(llist);
+
+Stack<int> s = new Stack<int>();
+
+#!markdown
+
+### Dictionary
+
+#!csharp
+
+var dict = new Dictionary<string, int>();
+dict.Add("key1", 1);
+dict.Add("key2", 5);
+dict.Add("key3", 7);
+
+display(dict);
+
+#!csharp
+
+var dict = new Dictionary<string, int>()
+{
+    { "key1", 1 },
+    { "key2", 5 },
+    { "key3", 7 }
+};
+
+display(dict);
+
+#!csharp
+
+dict.Add("key1", 2);
+
+#!csharp
+
+display(dict.ContainsKey("key1"));
+display(dict.ContainsKey("key3"));
+display(dict.ContainsKey("key8"));
+
+#!csharp
+
+display(dict["key1"]);
+display(dict["key3"]);
+
+dict["key1"] = 7;
+
+display(dict);
+
+Dictionary<string, List<int>> dict2 = new Dictionary<string, List<int>>();
+
+#!csharp
+
+display(dict["key9"]);
+
+#!csharp
+
+if (dict.ContainsKey("key9"))
+{
+    display(dict["key9"]);
+}
+else
+{
+    display("No such key");
+}
+
+#!csharp
+
+int value = 0;
+display(dict.TryGetValue("key9", out value));
+display(value);
