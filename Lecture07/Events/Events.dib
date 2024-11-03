@@ -1,0 +1,101 @@
+#!markdown
+
+# Publishing Event (Publisher)
+
+#!csharp
+
+public class Counter
+{
+    public delegate void CounterListener(int number, string message);
+
+    public event CounterListener OnCounterStep;
+
+    public void CountNumbers(int fromNumber, int toNumber)
+    {
+        for (int number = fromNumber; number <= toNumber; number++)
+        {
+            OnCounterStep(number, $"Just a number {number}");
+        }
+    }
+}
+
+#!markdown
+
+# Class listening to the event (Subscriber)
+
+#!csharp
+
+public class Test
+{
+    Counter counter;
+
+    public Test(Counter c)
+    {
+        counter = c;
+        counter.OnCounterStep += HandleCounter;
+    }
+
+    void HandleCounter(int number, string message)
+    {
+        Console.WriteLine(number);
+        
+    }
+}
+
+#!markdown
+
+# Testing Ground
+
+#!csharp
+
+var counter = new Counter();
+var listener1 = new Test(counter);
+counter.CountNumbers(1, 10);
+
+#!markdown
+
+# Multiple Subscribers
+
+#!csharp
+
+var counter = new Counter();
+var listener1 = new Test(counter);
+var listener2 = new Test(counter);
+counter.CountNumbers(1, 10);
+
+#!csharp
+
+var counter = new Counter();
+var listener1 = new Test(counter);
+var listener2 = new Test(counter);
+counter.OnCounterStep += (number, message) => Console.WriteLine(message);
+counter.CountNumbers(1, 10);
+
+#!markdown
+
+# Bad Example
+
+#!csharp
+
+public class Counter2
+{
+    public delegate void CounterListener(int number, string message);
+
+    public event CounterListener OnCounterStep;
+
+    public void CountNumbers(int fromNumber, int toNumber)
+    {
+        for (int number = fromNumber; number <= toNumber; number++)
+        {
+            OnCounterStep += Handler;
+            OnCounterStep(number, $"Just a number {number}");
+        }
+    }
+
+    public void Handler(int number, string message)
+    {
+        Console.WriteLine(number);
+    }
+}
+
+new Counter2().CountNumbers(1, 10);

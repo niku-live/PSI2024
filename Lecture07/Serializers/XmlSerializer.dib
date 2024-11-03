@@ -1,0 +1,203 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
+#!markdown
+
+# Remove old files
+
+#!pwsh
+
+Remove-Item "xmlser_*.xml"
+
+#!markdown
+
+# Data Classes
+
+#!csharp
+
+#r "ExampleDataLib.dll"
+
+public class Employee
+{
+    public string Name { get; set; }
+    public string LastName { get; set; }
+    public int Age { get; set; }
+    public DateTime BirthDate { get; set; }
+}
+
+public class Company
+{
+    public string CompanyName { get; set; }
+    public string CompanyAddress { get; set; }
+    public List<Employee> Employees { get; set;}
+}
+
+#!markdown
+
+# Data
+
+#!csharp
+
+#r "ExampleDataLib.dll"
+
+using Data=ExampleDataLib;
+
+var data = new[] {
+    new Data.Company
+    {
+        CompanyName = "Company One",
+        CompanyAddress = "In the middle of nowhere st. 1",
+        Employees = new List<Data.Employee>()
+        {
+            new Data.Employee
+            {
+                Name = "John",
+                LastName = "Smith",
+                Age = 30,
+                BirthDate = new DateTime(1991, 10, 7)
+            },
+            new Data.Employee
+            {
+                Name = "Alex",
+                LastName = "Max",
+                Age = 25,
+                BirthDate = new DateTime(1996, 1, 7)
+            }
+        }
+    },
+    new Data.Company
+    {
+        CompanyName = "Company Two",
+        CompanyAddress = "Somewhere in Mars",
+        Employees = new List<Data.Employee>()
+        {
+            new Data.Employee
+            {
+                Name = "Torii",
+                LastName = "Marel",
+                Age = 130,
+                BirthDate = new DateTime(1891, 7, 5)
+            }
+        }
+    }
+};
+
+#!csharp
+
+data
+
+#!markdown
+
+# Serialization
+
+#!csharp
+
+#r "ExampleDataLib.dll"
+
+using System.IO;
+using Data=ExampleDataLib;
+
+using (var stream = new FileStream("xmlser_test.xml", FileMode.CreateNew, FileAccess.Write, FileShare.None))
+{
+    var serializer = new System.Xml.Serialization.XmlSerializer(typeof(Data.Company[]));
+    serializer.Serialize(stream, data);
+}
+
+#!pwsh
+
+Get-Content ".\xmlser_test.xml"
+
+#!markdown
+
+# Deserialization
+
+#!csharp
+
+#r "ExampleDataLib.dll"
+
+using System.IO;
+using Data=ExampleDataLib;
+
+ExampleDataLib.Company[] dataFromFile;
+using (var stream = new FileStream("xmlser_test.xml", FileMode.Open, FileAccess.Read, FileShare.None))
+{
+    var serializer = new System.Xml.Serialization.XmlSerializer(typeof(ExampleDataLib.Company[]));
+    dataFromFile = serializer.Deserialize(stream) as Data.Company[];
+}
+
+display(dataFromFile);
+
+#!markdown
+
+# Serialization special exceptions
+
+#!csharp
+
+#r "ExampleDataLib.dll"
+
+using System.Xml.Serialization;
+
+public class Employee
+{
+    public string Name { get; set; }
+    public string LastName { get; set; }
+    public int Age { get; set; }
+    public DateTime BirthDate { get; set; }
+    [XmlIgnore]
+    public int SystemId { get; set; }
+}
+
+public class Company
+{
+    [XmlElement("CompName")]
+    public string CompanyName { get; set; }    
+    public string CompanyAddress { get; set; }
+    public List<Employee> Employees { get; set;}
+}
+
+#!csharp
+
+#r "ExampleDataLib.dll"
+
+using Data=ExampleDataLib.CustomNames;
+
+var data2 = new[] {
+    new Data.Company
+    {
+        CompanyName = "Company One",
+        CompanyAddress = "In the middle of nowhere st. 1",
+        Employees = new List<Data.Employee>()
+        {
+            new Data.Employee
+            {
+                Name = "John",
+                LastName = "Smith",
+                Age = 30,
+                BirthDate = new DateTime(1991, 10, 7),
+                SystemId = 5
+            }
+        }
+    }
+};
+
+#!csharp
+
+data2
+
+#!csharp
+
+#r "ExampleDataLib.dll"
+
+using System.IO;
+using Data=ExampleDataLib.CustomNames;
+
+using (var stream = new FileStream("xmlser_test2.xml", FileMode.CreateNew, FileAccess.Write, FileShare.None))
+{
+    var serializer = new System.Xml.Serialization.XmlSerializer(typeof(Data.Company[]));
+    serializer.Serialize(stream, data2);
+}
+
+#!pwsh
+
+Get-Content ".\xmlser_test2.xml"

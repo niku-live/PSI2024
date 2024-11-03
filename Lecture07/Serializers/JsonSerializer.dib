@@ -1,0 +1,208 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
+#!markdown
+
+# Remove old files
+
+#!pwsh
+
+Remove-Item "jsonser_*.json"
+
+#!markdown
+
+# Data Classes
+
+#!csharp
+
+#r "ExampleDataLib.dll"
+
+public class Employee
+{
+    public string Name { get; set; }
+    public string LastName { get; set; }
+    public int Age { get; set; }
+    public DateTime BirthDate { get; set; }
+}
+
+public class Company
+{
+    public string CompanyName { get; set; }
+    public string CompanyAddress { get; set; }
+    public List<Employee> Employees { get; set;}
+}
+
+#!markdown
+
+# Data
+
+#!csharp
+
+#r "ExampleDataLib.dll"
+
+using Data=ExampleDataLib;
+
+var data = new[] {
+    new Data.Company
+    {
+        CompanyName = "Company One",
+        CompanyAddress = "In the middle of nowhere st. 1",
+        Employees = new List<Data.Employee>()
+        {
+            new Data.Employee
+            {
+                Name = "John",
+                LastName = "Smith",
+                Age = 30,
+                BirthDate = new DateTime(1991, 10, 7)
+            },
+            new Data.Employee
+            {
+                Name = "Alex",
+                LastName = "Max",
+                Age = 25,
+                BirthDate = new DateTime(1996, 1, 7)
+            }
+        }
+    },
+    new Data.Company
+    {
+        CompanyName = "Company Two",
+        CompanyAddress = "Somewhere in Mars",
+        Employees = new List<Data.Employee>()
+        {
+            new Data.Employee
+            {
+                Name = "Torii",
+                LastName = "Marel",
+                Age = 130,
+                BirthDate = new DateTime(1891, 7, 5)
+            }
+        }
+    }
+};
+
+#!csharp
+
+data
+
+#!markdown
+
+# Serialization
+
+#!csharp
+
+#r "nuget:Newtonsoft.Json"
+#r "ExampleDataLib.dll"
+
+using System.IO;
+using Newtonsoft.Json;
+
+using (var streamWriter = new StreamWriter("jsonser_test.json"))
+{   
+    var jsonString = JsonConvert.SerializeObject(data);
+    streamWriter.Write(jsonString);
+}
+
+#!pwsh
+
+Get-Content ".\jsonser_test.json"
+
+#!markdown
+
+# Deserialization
+
+#!csharp
+
+#r "nuget:Newtonsoft.Json"
+#r "ExampleDataLib.dll"
+
+using System.IO;
+using Newtonsoft.Json;
+using Data=ExampleDataLib;
+
+Data.Company[] dataFromFile;
+using (var stream = new StreamReader("jsonser_test.json"))
+{    
+    var jsonString = stream.ReadToEnd();
+    dataFromFile = JsonConvert.DeserializeObject<Data.Company[]>(jsonString);    
+}
+
+display(dataFromFile);
+
+#!markdown
+
+# Serialization special exceptions
+
+#!csharp
+
+#r "nuget:Newtonsoft.Json"
+#r "ExampleDataLib.dll"
+
+using Newtonsoft.Json;
+
+public class Employee
+{
+    public string Name { get; set; }
+    public string LastName { get; set; }
+    public int Age { get; set; }
+    public DateTime BirthDate { get; set; }
+    [JsonIgnore]
+    public int SystemId { get; set; }
+}
+
+public class Company
+{
+    [JsonProperty("compName")]
+    public string CompanyName { get; set; }
+    public string CompanyAddress { get; set; }
+    public List<Employee> Employees { get; set;}
+}
+
+#!csharp
+
+#r "ExampleDataLib.dll"
+
+using Data=ExampleDataLib.CustomNames;
+
+var data2 = new[] {
+    new Data.Company
+    {
+        CompanyName = "Company One",
+        CompanyAddress = "In the middle of nowhere st. 1",
+        Employees = new List<Data.Employee>()
+        {
+            new Data.Employee
+            {
+                Name = "John",
+                LastName = "Smith",
+                Age = 30,
+                BirthDate = new DateTime(1991, 10, 7),
+                SystemId = 5
+            }
+        }
+    }
+};
+
+#!csharp
+
+data2
+
+#!csharp
+
+#r "nuget:Newtonsoft.Json"
+#r "ExampleDataLib.dll"
+
+using System.IO;
+using Newtonsoft.Json;
+
+using (var streamWriter = new StreamWriter("jsonser_test2.json"))
+{   
+    var jsonString = JsonConvert.SerializeObject(data2);
+    streamWriter.Write(jsonString);
+}
+
+#!pwsh
+
+Get-Content ".\jsonser_test2.json"
