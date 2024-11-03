@@ -1,0 +1,123 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
+#!markdown
+
+# IComparable
+
+#!markdown
+
+### Intro Example
+
+#!csharp
+
+public static void PrintList<T>(List<T> data)
+{
+    Console.WriteLine("----->");
+    foreach (var item in data)
+    {
+      Console.WriteLine(item);
+    }
+    Console.WriteLine("<-----");
+}
+
+#!csharp
+
+display("");
+var list = new List<int>()
+{
+    1, 2, 0, 5, 4
+};
+
+Console.WriteLine("Before:");
+PrintList(list);
+
+list.Sort();
+Console.WriteLine("After:");
+PrintList(list);
+
+#!markdown
+
+### Plain Class
+
+#!csharp
+
+public class ComplexNumber
+{
+  public int Imaginary { get; set; }
+  public int Real { get; set; }
+
+  public ComplexNumber(int real, int imaginary)
+  {
+    Imaginary = imaginary;
+    Real = real;
+  }
+
+  public override string ToString()
+  {
+    return $"{Real} + {Imaginary}i";
+  }
+}
+
+#!csharp
+
+display("");
+var list = new List<ComplexNumber>()
+{
+    new ComplexNumber(0, 1),
+    new ComplexNumber(0, 2),
+    new ComplexNumber(1, 0),
+    new ComplexNumber(1, 2),
+    new ComplexNumber(0, 4),
+    new ComplexNumber(-1, 0)
+};
+
+Console.WriteLine("Before:");
+PrintList(list);
+
+list.Sort();
+Console.WriteLine("After:");
+PrintList(list);
+
+#!markdown
+
+### IComparable implementation
+
+#!csharp
+
+public class ComplexNumberWithInterface: ComplexNumber, IComparable<ComplexNumberWithInterface>
+{
+    public ComplexNumberWithInterface(int real, int imaginary): base(real, imaginary) {}
+
+    public int CompareTo(ComplexNumberWithInterface other)
+    {
+        int result = Real.CompareTo(other.Real);
+        if (result != 0)
+        {
+          return result;
+        }
+        result = Imaginary.CompareTo(other.Imaginary);
+        return result;
+    }
+}
+
+#!csharp
+
+display("");
+var list = new List<ComplexNumberWithInterface>()
+{
+    new ComplexNumberWithInterface(0, 1),
+    new ComplexNumberWithInterface(0, 2),
+    new ComplexNumberWithInterface(1, 0),
+    new ComplexNumberWithInterface(1, 2),
+    new ComplexNumberWithInterface(0, 4),
+    new ComplexNumberWithInterface(-1, 0)
+};
+
+Console.WriteLine("Before:");
+PrintList(list);
+
+list.Sort();
+Console.WriteLine("After:");
+PrintList(list);

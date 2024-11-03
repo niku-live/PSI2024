@@ -1,0 +1,99 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
+#!markdown
+
+# Preparation
+
+#!pwsh
+
+Get-ChildItem *.txt | Select Name
+
+#!csharp
+
+var fileName = @".\test1.txt";
+
+#!markdown
+
+# ReadAllText / ReadAllLines
+
+#!csharp
+
+var resultLines = System.IO.File.ReadAllLines(fileName);
+var result = System.IO.File.ReadAllText(fileName);
+display(result);
+
+display(resultLines);
+
+#!markdown
+
+# FileStream
+
+#!csharp
+
+using System.IO;
+var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.None);
+var stringBuilder = new StringBuilder();
+var buffer = new Byte[1024];
+int bytesRead = 0;
+do
+{
+    bytesRead = stream.Read(buffer, 0, buffer.Length);
+    if (bytesRead > 0)
+    {
+        stringBuilder.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
+    }
+} while (bytesRead > 0);
+stream.Close();
+display(stringBuilder.ToString());
+
+#!markdown
+
+# StreamReader
+
+#!csharp
+
+using System.IO;
+var streamReader = new StreamReader(fileName);
+var result = streamReader.ReadToEnd();
+streamReader.Close();
+display(result);
+
+#!markdown
+
+# Using operator
+
+#!csharp
+
+using System.IO;
+
+
+using(var streamReader = new StreamReader(fileName))
+{
+    var result = streamReader.ReadToEnd();
+    display(result);
+}
+
+#!csharp
+
+using System.IO;
+
+StreamReader streamReader = null;
+String result = null;
+try
+{
+    streamReader = new StreamReader(fileName);
+    result = streamReader.ReadToEnd();   
+}
+finally
+{
+    if (streamReader != null)
+    {
+        streamReader.Close();
+        streamReader.Dispose();
+        streamReader = null;
+    }
+}
+
+display(result);
