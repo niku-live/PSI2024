@@ -31,3 +31,5 @@ All code examples should also work without any problems using Visual Studio Code
 - [Lecture 05](Lecture05/README.md)
 - [Lecture 06](Lecture06/README.md)
 - [Lecture 07](Lecture07/README.md)
+- Lecture 08: Deadline 1
+- [Lecture 09](Lecture09/README.md)
