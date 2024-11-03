@@ -1,0 +1,132 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
+#!markdown
+
+# IComparer
+
+#!markdown
+
+### Plain Class
+
+#!csharp
+
+public static void PrintList<T>(List<T> data)
+{
+    Console.WriteLine("----->");
+    foreach (var item in data)
+    {
+      Console.WriteLine(item);
+    }
+    Console.WriteLine("<-----");
+}
+
+#!csharp
+
+public class ComplexNumber: IComparable<ComplexNumber>
+{
+  public int Imaginary { get; set; }
+  public int Real { get; set; }
+
+  public ComplexNumber(int real, int imaginary)
+  {
+    Imaginary = imaginary;
+    Real = real;
+  }
+
+  public override string ToString()
+  {
+    return $"{Real} + {Imaginary}i";
+  }
+
+  public int CompareTo(ComplexNumber other)
+  {
+      int result = Real.CompareTo(other.Real);
+      if (result != 0)
+      {
+        return result;
+      }
+      result = Imaginary.CompareTo(other.Imaginary);
+      return result;
+  }
+}
+
+#!markdown
+
+### IComparer implementation
+
+#!csharp
+
+public class CompareOnlyReal : IComparer<ComplexNumber>
+{
+  public int Compare(ComplexNumber x, ComplexNumber y)
+  {
+    return x.Real.CompareTo(y.Real);
+  }
+}
+
+public class CompareOnlyImaginary : IComparer<ComplexNumber>
+{
+  public int Compare(ComplexNumber x, ComplexNumber y)
+  {
+    return x.Imaginary.CompareTo(y.Imaginary);
+  }
+}
+
+public class CompareWithOrder : IComparer<ComplexNumber>
+{
+  public bool Descending { get; set; }
+  public CompareWithOrder(bool descending) { Descending = descending; }
+
+  public int Compare(ComplexNumber x, ComplexNumber y)
+  {
+    int result = x.CompareTo(y);
+    return Descending ? -result : result;
+  }
+}
+
+#!csharp
+
+display("");
+List<ComplexNumber> numbers = new List<ComplexNumber>()
+{
+  new ComplexNumber(0, 1),
+  new ComplexNumber(0, 4),
+  new ComplexNumber(1, 0),
+  new ComplexNumber(1, 2),
+  new ComplexNumber(0, 2),
+  new ComplexNumber(-1, 0)
+};
+Console.WriteLine("Original");
+PrintList(numbers);
+
+#!csharp
+
+numbers.Sort(new CompareOnlyReal());
+Console.WriteLine("Only real comparison");
+PrintList(numbers);
+
+#!csharp
+
+numbers.Sort(new CompareOnlyImaginary());
+Console.WriteLine("Only imaginary comparison");
+PrintList(numbers);
+
+#!csharp
+
+numbers.Sort(new CompareWithOrder(true));
+Console.WriteLine("Descending");
+PrintList(numbers);
+
+#!csharp
+
+numbers.Sort(new CompareWithOrder(false));
+Console.WriteLine("Ascending");
+PrintList(numbers);
+
+#!csharp
+
+numbers.Sort();
+Console.WriteLine("Normal sort");
+PrintList(numbers);

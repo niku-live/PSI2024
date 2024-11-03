@@ -1,0 +1,112 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
+#!markdown
+
+# Preparation
+
+#!pwsh
+
+Remove-Item ".\w_*.txt"
+Get-ChildItem *.txt | Select Name
+
+#!csharp
+
+var fileName = @".\w_test1.txt";
+var data = new string[] {
+    "Line 1",
+    "Line 2",
+    "Line 3"
+};
+var dataAsOneString = string.Join('\n', data);
+
+#!markdown
+
+# WriteAllLines / WriteAllText
+
+#!csharp
+
+System.IO.File.WriteAllLines(fileName, data);
+//System.IO.File.WriteAllText(fileName, dataAsOneString);
+
+#!pwsh
+
+Get-ChildItem *.txt | Select Name
+
+#!pwsh
+
+Get-Content ".\w_test1.txt"
+
+#!markdown
+
+# FileStream
+
+#!csharp
+
+using System.IO;
+if (File.Exists(fileName))
+{
+    File.Delete(fileName);
+}
+var stream = new FileStream(fileName, FileMode.CreateNew, FileAccess.Write, FileShare.None);
+var buffer = Encoding.UTF8.GetBytes(dataAsOneString);
+stream.Write(buffer, 0, buffer.Length);
+stream.Close();
+
+#!pwsh
+
+Get-Content ".\w_test1.txt"
+
+#!markdown
+
+# StreamWriter
+
+#!csharp
+
+using System.IO;
+var streamWriter = new StreamWriter(fileName);
+streamWriter.Write(dataAsOneString);
+streamWriter.Close();
+
+#!pwsh
+
+Get-Content ".\w_test1.txt"
+
+#!markdown
+
+# Using Operator
+
+#!csharp
+
+using System.IO;
+using (var streamWriter = new StreamWriter(fileName))
+{
+    streamWriter.Write(dataAsOneString);
+}
+
+#!pwsh
+
+Get-Content ".\w_test1.txt"
+
+#!csharp
+
+using System.IO;
+
+StreamWriter streamWriter = null;
+
+try
+{
+    streamWriter = new StreamWriter(fileName);
+    streamWriter.Write(dataAsOneString);
+}
+finally
+{
+    if (streamWriter != null)
+    {
+        streamWriter.Flush();
+        streamWriter.Close();
+        streamWriter.Dispose();
+        streamWriter = null;
+    }
+}

@@ -1,0 +1,146 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
+#!markdown
+
+# IEquatable
+
+#!markdown
+
+### Plain Class
+
+#!csharp
+
+public class ComplexNumber
+{
+  public int Imaginary { get; set; }
+  public int Real { get; set; }
+
+  public ComplexNumber(int real, int imaginary)
+  {
+    Imaginary = imaginary;
+    Real = real;
+  }
+
+  public override string ToString()
+  {
+    return $"{Real} + {Imaginary}i";
+  }
+}
+
+#!csharp
+
+display("");
+var c1 = new ComplexNumber(1, 2);
+var c2 = new ComplexNumber(1, 2);
+
+Console.WriteLine($"c1 == c2: {c1.Equals(c2)}");
+
+List<ComplexNumber> list = new List<ComplexNumber>();
+list.Add(c1);
+
+Console.WriteLine($"c1 in List: {list.Contains(c1)}");
+Console.WriteLine($"c2 in List: {list.Contains(c2)}");
+Console.WriteLine($"c2 in List: {list.IndexOf(c2)}");
+
+#!markdown
+
+### IEquatable implementation
+
+#!csharp
+
+public class ComplexNumberWithInterface: ComplexNumber, IEquatable<ComplexNumberWithInterface>
+{
+    public ComplexNumberWithInterface(int real, int imaginary): base(real, imaginary) {}
+
+    public bool Equals(ComplexNumberWithInterface other)
+    {
+        return other.Real == this.Real && other.Imaginary == this.Imaginary;
+    }
+}
+
+#!csharp
+
+display("");
+var c1 = new ComplexNumberWithInterface(1, 2);
+var c2 = new ComplexNumberWithInterface(1, 2);
+
+Console.WriteLine($"c1 == c2: {c1.Equals(c2)}");
+
+List<ComplexNumberWithInterface> list = new List<ComplexNumberWithInterface>();
+list.Add(c1);
+
+Console.WriteLine($"c1 in List: {list.Contains(c1)}");
+Console.WriteLine($"c2 in List: {list.Contains(c2)}");
+Console.WriteLine($"c2 in List: {list.IndexOf(c2)}");
+Console.WriteLine($"c2 in List: {list.Contains(new ComplexNumberWithInterface(1, 2))}");
+
+#!markdown
+
+### Full Implementation
+
+#!csharp
+
+Console.WriteLine($"c1 == c2: {c1.Equals((object)c2)}");
+Console.WriteLine($"c1 == c2: {c1 == c2}");
+
+#!csharp
+
+public class ComplexNumberFull: ComplexNumber, IEquatable<ComplexNumberFull>
+{
+    public ComplexNumberFull(int real, int imaginary): base(real, imaginary) {}
+
+    public bool Equals(ComplexNumberFull other)
+    {
+        Console.WriteLine("Equals(ComplexNumberFull other)");
+        return other.Real == this.Real && other.Imaginary == this.Imaginary;
+    }
+
+    public override bool Equals(object? other)
+    {
+        Console.WriteLine("Equals(object? other)");
+        return other switch
+        {
+            ComplexNumberFull cn => this.Equals(cn),
+            _ => false
+        };
+    }
+
+    public override int GetHashCode()
+    {
+        return Real.GetHashCode() * 10 + Imaginary.GetHashCode();
+    }
+
+    public static bool operator ==(ComplexNumberFull cn1, ComplexNumberFull cn2)
+    {
+        Console.WriteLine("operator ==");
+        return cn1.Equals(cn2);
+    }
+
+    public static bool operator !=(ComplexNumberFull cn1, ComplexNumberFull cn2)
+    {
+        Console.WriteLine("operator !=");
+        return !cn1.Equals(cn2);
+    }
+}
+
+#!csharp
+
+display("");
+var c1 = new ComplexNumberFull(1, 2);
+var c2 = new ComplexNumberFull(1, 2);
+
+Console.WriteLine($"c1 == c2: {c1.Equals(c2)}");
+
+List<ComplexNumberFull> list = new List<ComplexNumberFull>();
+
+list.Add(new ComplexNumberFull(3, 4));
+list.Add(c1);
+
+Console.WriteLine($"c1 in List: {list.Contains(c1)}");
+Console.WriteLine($"c2 in List: {list.Contains(c2)}");
+Console.WriteLine($"c2 in List: {list.IndexOf(c2)}");
+
+Console.WriteLine($"c1 == c2: {c1.Equals((object)c2)}");
+Console.WriteLine($"c1 == c2: {c1 == c2}");
