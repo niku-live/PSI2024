@@ -1,0 +1,247 @@
+#!markdown
+
+# Using delegate variable different ways
+
+#!csharp
+
+delegate void ExampleDelegate(string data);
+
+ExampleDelegate delegateVariable;
+
+#!markdown
+
+### Assigning existing method as a value
+
+#!csharp
+
+void Test1(string data)
+{
+    Console.WriteLine($"Call from Test1 method: {data}");
+}
+
+delegateVariable = Test1;
+delegateVariable("Test data");
+
+#!markdown
+
+### Assigning anonymous method (declared with delegate syntax) as a value
+
+#!csharp
+
+delegateVariable = delegate(string data) { Console.WriteLine($"Call from anonymous method: {data}"); };
+delegateVariable("Test data");
+
+#!csharp
+
+delegateVariable = delegate(string data)
+{ 
+    Console.WriteLine($"Call from anonymous method: {data}");
+};
+delegateVariable("Test data");
+
+#!csharp
+
+delegateVariable = delegate(string data)
+{ 
+    Console.WriteLine($"Call from anonymous method: {data}");
+    Console.WriteLine($"Call from anonymous method (second line): {data}");
+};
+delegateVariable("Test data");
+
+#!markdown
+
+### Assigning anonymous-lambda method (declared with lambda syntax) as a value
+
+#!csharp
+
+delegateVariable = data => Console.WriteLine($"Call from lambda method: {data}");
+delegateVariable("Test data");
+
+#!csharp
+
+delegateVariable = (string data) => Console.WriteLine($"Call from lambda method: {data}");
+delegateVariable("Test data");
+
+#!csharp
+
+delegateVariable = (string data) =>
+{ 
+    Console.WriteLine($"Call from lambda method: {data}");
+};
+delegateVariable("Test data");
+
+#!markdown
+
+# Anonymous methods possible use-cases
+
+#!csharp
+
+Test1("Test data");
+
+#!csharp
+
+(delegate(string data) { Console.WriteLine($"Call from anonymous method: {data}"); })("Test data"); //Anonymous method cannot be called directly
+
+#!csharp
+
+(data => Console.WriteLine($"Call from lambda method: {data}"))("Test data"); //Lambda expression cannot be called directly
+
+#!csharp
+
+void DataPrinter(string data, ExampleDelegate bodyPrinter)
+{
+    Console.WriteLine("This is header.");
+
+    Console.WriteLine("This is body start.");
+    bodyPrinter(data);
+    Console.WriteLine("This is body end.");
+    
+    Console.WriteLine("This is footer.");
+}
+
+#!csharp
+
+DataPrinter("Test data", Test1);
+
+#!csharp
+
+DataPrinter("Test data", delegate(string data) { Console.WriteLine($"Call from anonymous method: {data}"); });
+
+#!csharp
+
+DataPrinter("Test data", data => Console.WriteLine($"Call from lambda method: {data}"));
+
+#!csharp
+
+delegate int ExampleDelegate2(int a, int b);
+ExampleDelegate2 delegateVariable2;
+
+#!csharp
+
+int Add(int a, int b)
+{
+    Console.WriteLine("Call from method Add");
+    return a + b;
+}
+
+delegateVariable2 = Add;
+Console.WriteLine(delegateVariable2(2, 3));
+
+#!csharp
+
+delegateVariable2 = delegate(int a, int b) { return a + b; };
+Console.WriteLine(delegateVariable2(2, 3));
+
+#!csharp
+
+delegateVariable2 = delegate(int a, int b)
+{ 
+    Console.WriteLine("Call from method anonymous method");
+    return a + b;
+};
+Console.WriteLine(delegateVariable2(2, 3));
+
+#!csharp
+
+delegateVariable2 = (int a, int b) =>
+{
+    Console.WriteLine("Call from method lambda method");
+    return a + b;
+};
+Console.WriteLine(delegateVariable2(2, 3));
+
+#!csharp
+
+delegateVariable2 = (int a, int b) => { return a + b; };
+Console.WriteLine(delegateVariable2(2, 3));
+
+#!csharp
+
+delegateVariable2 = (a, b) => { return a + b; };
+Console.WriteLine(delegateVariable2(2, 3));
+
+#!csharp
+
+delegateVariable2 = (a, b) => a + b;
+Console.WriteLine(delegateVariable2(2, 3));
+
+#!markdown
+
+# Delegates and LINQ
+
+#!csharp
+
+class Person
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+}
+
+var persons = new List<Person>()
+{
+    new Person() { Name = "John", Age = 22 },
+    new Person() { Name = "Itan", Age = 30 },
+    new Person() { Name = "Isabela", Age = 25 }
+};
+
+#!csharp
+
+var person = persons.FirstOrDefault(p => p.Age < 30);
+
+var filteredPersons = persons.Where(p => p.Age < 30).OrderBy(p => p.Name);
+
+#!csharp
+
+var person = persons.FirstOrDefault((Person p) => p.Age < 30);
+
+#!csharp
+
+var person = persons.FirstOrDefault((Person p) => { return p.Age < 30; });
+
+#!csharp
+
+var person = persons.FirstOrDefault(delegate(Person p) { return p.Age < 30; });
+
+#!csharp
+
+bool PersonMeetsRequirements(Person p) { return p.Age < 30; }
+
+var person = persons.FirstOrDefault(PersonMeetsRequirements);
+
+#!markdown
+
+# Standard Delegates
+
+#!csharp
+
+Action<string> actionVariable1 = Test1;
+actionVariable1("Test data");
+
+#!csharp
+
+Action<string, string> actionVariable2 = (s1, s2) => Console.WriteLine($"{s1}:{s2}");
+actionVariable2("Test data", "Test data 2");
+
+#!csharp
+
+Action<T1, T2, T3, ..., TN> === void delegate DelegateName(T1 p1, T2 p2, T3 p3, ..., TN pn);
+
+#!csharp
+
+Func<int, int, int> funcVariable1 = Add;
+Console.WriteLine(funcVariable1(2, 3));
+
+#!csharp
+
+Func<int> funcVariable2 = () => 10;
+
+Console.WriteLine(funcVariable2());
+
+#!csharp
+
+Func<int, int> funcVariable3 = p1 => p1 * 10;
+Console.WriteLine(funcVariable3(2));
+
+#!csharp
+
+Func<T1, T2, T3, ... TN> === TN delegate DelegateName(T1 p1, T2 p2, T3 p3, .. TN-1 pn-1)
