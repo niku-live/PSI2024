@@ -1,0 +1,169 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
+#!markdown
+
+# String Constants
+
+#!csharp
+
+string name = "John";
+string s = String.Empty;
+
+display("-----------------");
+
+s = "Default representation C:\\Test \" ";
+display(s);
+display("-----------------");
+
+#!csharp
+
+s = @"Escapes \ ignored C:\Test "" ";
+display(s);
+display("-----------------");
+
+#!csharp
+
+s = @"
+Multiline string
+Second line
+Third line
+";
+display(s);
+display("-----------------");
+
+#!csharp
+
+s = $"Interpolated |{name}|  |{1+2}|";
+display(s);
+display("-----------------");
+
+#!csharp
+
+s = $"Interpolated & formated |{name, 5}|  |{1+2,10}|0x{1+2,-10:X3}|";
+display(s);
+display("-----------------");
+
+#!csharp
+
+s = $@"
+Interpolated & formated |{name, 5}|  |{1+2,10}|0x{1+2,-10:X3}|
+Second line             |{" ",5}|  |{10+8,10}|0x{10+8,-10:X3}|
+";
+display(s);
+display("-----------------");
+
+#!markdown
+
+# String Concatenation vs format vs interpolation
+
+#!csharp
+
+string name = "John";
+string lastName = "Johnson";
+
+//Concatenation
+var s = "Human " + name + " " + lastName;
+display(s);
+
+#!csharp
+
+//Format
+s = String.Format("Human {0} {1}", name, lastName);
+display(s);
+
+#!csharp
+
+//Interpolation
+s = $"Human {name} {lastName}";
+display(s);
+
+#!markdown
+
+# String Builder
+
+#!csharp
+
+var stringBuilder = new StringBuilder();
+stringBuilder.Append("Human ");
+stringBuilder.Append(name);
+stringBuilder.Append(" ");
+stringBuilder.Append(lastName);
+var s = stringBuilder.ToString();
+display(s);
+
+#!markdown
+
+# Benchmarking
+
+#!csharp
+
+#r "nuget:BenchmarkDotNet"
+using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Running;
+using BenchmarkDotNet.Validators;
+using BenchmarkDotNet.Configs;
+
+public class AllowNonOptimized : ManualConfig
+{
+    public AllowNonOptimized()
+    {
+        Add(JitOptimizationsValidator.DontFailOnError); // ALLOW NON-OPTIMIZED DLLS
+
+        Add(DefaultConfig.Instance.GetLoggers().ToArray()); // manual config has no loggers by default
+        Add(DefaultConfig.Instance.GetExporters().ToArray()); // manual config has no exporters by default
+        Add(DefaultConfig.Instance.GetColumnProviders().ToArray()); // manual config has no columns by default
+    }
+}
+
+public class StringTests
+{
+    [Params(2, 10, 100, 1_000, 10_000)]
+    public int ConcatCount { get; set; }
+
+    [Benchmark]
+    public void AsString()
+    {
+        var s = "";
+        for (int i = 0; i < ConcatCount; i++)
+        {
+            s += "0";
+        }
+        int len = s.Length;
+    }
+
+    [Benchmark]
+    public void AsStringBuilder()
+    {
+        var sb = new StringBuilder();
+        for (int i = 0; i < ConcatCount; i++)
+        {
+            sb.Append("0");
+        }
+        var s = sb.ToString();
+        int len = s.Length;
+    }
+}
+
+var r = BenchmarkRunner.Run<StringTests>(new AllowNonOptimized());
+
+#!pwsh
+
+cd ..
+dotnet run -c Release --project ".\StringBenchmark\StringBenchmark\StringBenchmark.csproj"
+
+#!markdown
+
+|          Method | ConcatCount |            Mean |         Error |        StdDev |
+|---------------- |------------ |----------------:|--------------:|--------------:|
+|        AsString |           2 |        13.65 ns |      0.303 ns |      0.618 ns |
+| AsStringBuilder |           2 |        20.98 ns |      0.406 ns |      0.379 ns |
+|        AsString |          10 |        94.59 ns |      1.149 ns |      1.075 ns |
+| AsStringBuilder |          10 |        42.36 ns |      0.283 ns |      0.265 ns |
+|        AsString |         100 |     1,467.72 ns |     20.938 ns |     19.585 ns |
+| AsStringBuilder |         100 |       412.63 ns |      3.603 ns |      2.813 ns |
+|        AsString |        1000 |    66,141.90 ns |    698.616 ns |    583.376 ns |
+| AsStringBuilder |        1000 |     3,081.56 ns |     24.370 ns |     22.795 ns |
+|        AsString |       10000 | 5,182,357.86 ns | 97,435.630 ns | 91,141.349 ns |
+| AsStringBuilder |       10000 |    29,345.32 ns |    178.283 ns |    158.043 ns |

@@ -1,0 +1,186 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
+#!markdown
+
+# **Type** data type - how to create it
+
+#!csharp
+
+//System.Type
+
+//Using typeof operator
+var typeInfo = typeof(string);
+display(typeInfo);
+display(typeInfo.GetType());
+
+#!csharp
+
+//Using object.GetType() method
+string s = "Text";
+typeInfo = s.GetType();
+display(typeInfo);
+
+int i = 10;
+display(i.GetType());
+
+#!csharp
+
+//Using Type.GetType static method
+typeInfo = Type.GetType("System.String");
+display(typeInfo);
+
+typeInfo = Type.GetType("System.Int32");
+display(typeInfo);
+
+#!csharp
+
+//Generics
+typeInfo = typeof(List<string>);
+display(typeInfo);
+
+display(typeof(List<int>));
+
+display(typeof(List<>));
+
+#!markdown
+
+# **Type** data type - properties
+
+#!csharp
+
+var typeInfo = typeof(Type);
+
+var properties = typeInfo.GetProperties().Select(p => new { p.Name, p.PropertyType });
+display(properties);
+
+#!csharp
+
+class Person
+{
+    public string Name { get; set;}
+    public string LastName { get; set; }
+    public int TestProp {get ;set;}
+}
+
+var typeInfo = typeof(Person);
+
+var properties = typeInfo.GetProperties().Select(p => new { p.Name, p.PropertyType });
+display(properties);
+
+#!markdown
+
+# **Type** data type - methods
+
+#!csharp
+
+var typeInfo = typeof(Type);
+
+var methods = typeInfo.GetMethods().Select(m => new { m.Name, ParamCount = m.GetParameters().Count(), m.ReturnType });
+display(methods);
+
+#!csharp
+
+class Person
+{
+    public string Name { get; set;}
+
+    public void M1(int a, int b) {}
+    public void M1(int a, int b, int c) {}
+    public int M2(int a) => a;
+}
+
+var typeInfo = typeof(Person);
+var methods = typeInfo.GetMethods().Select(m => new { m.Name, ParamCount = m.GetParameters().Count(), m.ReturnType });
+display(methods);
+
+#!markdown
+
+# **Type** data type - how to use (for properties)
+
+#!csharp
+
+class Person
+{
+    public string Name { get; set;}
+    public string LastName { get; set; }
+    public int Age { get; set;}
+}
+
+var person = new Person() { Name = "John", LastName = "Johnson" };
+var typeInfo = typeof(Person);
+
+foreach (var property in typeInfo.GetProperties())
+{
+    var value = property.GetValue(person);
+    Console.WriteLine($"{property.Name}: {value}");
+}
+
+#!csharp
+
+var prop = typeInfo.GetProperty("LastName");
+prop.SetValue(person, "Carl");
+display(person);
+
+#!markdown
+
+# **Type** data type - how to use (for methods)
+
+#!csharp
+
+class Person
+{
+    public string Name { get; set;}
+    public string LastName { get; set; }
+
+    public string GetDisplayName(string locale)
+    {
+        if (locale == "lt-LT")
+        {
+            return $"{Name} {LastName}";
+        }
+        return $"{LastName}, {Name}";
+    }
+}
+
+var person = new Person() { Name = "John", LastName = "Johnson"};
+var typeInfo = typeof(Person);
+
+var method = typeInfo.GetMethods().FirstOrDefault(m => m.Name == "GetDisplayName");
+var result = method.Invoke(person, new[] { "lt-LT" }); //var result = person.GetDisplayName("lt-LT")
+Console.WriteLine(result);
+
+#!csharp
+
+result = method.Invoke(person, new[] { "en-US" });
+Console.WriteLine(result);
+
+#!markdown
+
+# **Type** data type - how to use (for constructor)
+
+#!csharp
+
+class Person
+{
+    public string Name { get; set;}
+    public string LastName { get; set; }
+
+    public Person(string name, string lastName)
+    {
+        Name = name;
+        LastName = lastName;
+    }
+}
+
+var typeInfo = typeof(Person);
+var constructor = typeInfo.GetConstructors().FirstOrDefault();
+var person = constructor.Invoke(new []{ "John", "Johnson" }) as Person;
+
+display(person);
+
+#!csharp
+
+person = constructor.Invoke(new []{ "John", "Smith" }) as Person;
+display(person);
