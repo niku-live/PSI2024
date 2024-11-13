@@ -1,0 +1,183 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
+#!markdown
+
+# Code generation - what we want to achieve
+
+#!csharp
+
+//namespace Samples
+//{
+  using System;
+  public class HelloWorld
+  {
+    public HelloWorld()
+    {
+      System.Console.WriteLine("Hello World!!");
+       writeHelloWorld();
+    }
+    private void writeHelloWorld()
+    {
+       System.Console.WriteLine("Hello World!!");
+    }
+    public static void Main()
+    {
+       HelloWorld hw = new HelloWorld();
+    }
+  }
+//}
+
+#!csharp
+
+new HelloWorld();
+
+#!markdown
+
+# Code generation
+
+#!csharp
+
+#r "nuget:Microsoft.CodeAnalysis.CSharp"
+#r "nuget:System.Runtime.Loader"
+#r "nuget:System.CodeDom"
+
+using System.IO;
+using System.CodeDom;
+using System.CodeDom.Compiler;
+using Microsoft.CSharp;
+
+//output file name
+string fileName = "HelloWorld3.cs";
+//text writer to write the code
+TextWriter tw = new StreamWriter(new FileStream(fileName, FileMode.Create));
+//code generator and code provider
+CSharpCodeProvider cdp = new CSharpCodeProvider();
+
+//Create Namespace
+CodeNamespace Samples = new CodeNamespace("Samples");
+//Add usings
+Samples.Imports.Add(new CodeNamespaceImport("System"));
+//Create class
+CodeTypeDeclaration Class1 = new CodeTypeDeclaration("HelloWorld");
+Samples.Types.Add(Class1);
+Class1.IsClass = true;
+
+//Add constructor
+CodeConstructor codeConstructor = new CodeConstructor();
+codeConstructor.Attributes = MemberAttributes.Public;
+codeConstructor.Statements.Add(new CodeSnippetStatement("System.Console.WriteLine(\"Hello World!!\");"));
+codeConstructor.Statements.Add(new CodeMethodInvokeExpression(null, "writeHelloWorld"));
+Class1.Members.Add(codeConstructor);
+
+//Add writeHelloWorld method
+CodeMemberMethod Method1 = new CodeMemberMethod();
+Method1.Name = "writeHelloWorld";
+Method1.ReturnType = new CodeTypeReference(typeof(void));
+CodeMethodInvokeExpression cs1 = new CodeMethodInvokeExpression(new CodeTypeReferenceExpression("System.Console"), "WriteLine", new CodePrimitiveExpression("Hello World!!"));
+Method1.Statements.Add(cs1);
+Class1.Members.Add(Method1);
+
+//Add Main method
+CodeEntryPointMethod Start = new CodeEntryPointMethod();
+Start.Statements.Add(new CodeSnippetStatement("HelloWorld hw = new HelloWorld();"));
+Class1.Members.Add(Start);
+
+//Generate code
+cdp.GenerateCodeFromNamespace(Samples, tw, null);
+tw.Close();
+
+#!markdown
+
+# Dynamic Code Compilation and Execution
+
+#!csharp
+
+#r "nuget:Microsoft.CodeAnalysis.CSharp"
+#r "nuget:System.Runtime.Loader"
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Loader;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
+
+SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(File.ReadAllText(fileName));
+string assemblyName = Path.GetRandomFileName();
+var refPaths = new [] {
+    typeof(System.Object).GetTypeInfo().Assembly.Location,
+    typeof(Console).GetTypeInfo().Assembly.Location,
+    Path.Combine(Path.GetDirectoryName(typeof(System.Runtime.GCSettings).GetTypeInfo().Assembly.Location), "System.Runtime.dll")
+};
+MetadataReference[] references = refPaths.Select(r => MetadataReference.CreateFromFile(r)).ToArray();
+
+display("Adding the following references");
+display(refPaths);
+
+display("Compiling ...");
+CSharpCompilation compilation = CSharpCompilation.Create(
+    assemblyName,
+    syntaxTrees: new[] { syntaxTree },
+    references: references,
+    options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+    using (var ms = new MemoryStream())
+    {
+        EmitResult result = compilation.Emit(ms);
+
+        if (!result.Success)
+        {
+            display("Compilation failed!");
+            IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic => 
+                diagnostic.IsWarningAsError || 
+                diagnostic.Severity == DiagnosticSeverity.Error);
+
+            foreach (Diagnostic diagnostic in failures)
+            {
+                Console.Error.WriteLine("\t{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
+            }
+        }
+        else
+        {
+            display("Compilation successful! Now instantiating and executing the code ...");
+            ms.Seek(0, SeekOrigin.Begin);
+            
+            Assembly assembly = AssemblyLoadContext.Default.LoadFromStream(ms);
+            var type= assembly.GetType("Samples.HelloWorld");
+            var instance = assembly.CreateInstance("Samples.HelloWorld");
+            //var meth = type.GetMember("writeHelloWorld").First() as MethodInfo;
+            //meth.Invoke(instance, new object[0]);
+        }
+    }
+
+#!csharp
+
+//.NET 4
+
+using System.IO;
+using System.CodeDom;
+using System.CodeDom.Compiler;
+using Microsoft.CSharp;
+
+var charpProvider = new CSharpCodeProvider();
+CompilerParameters cp = new CompilerParameters();
+cp.ReferencedAssemblies.Add("system.dll"); //includes
+cp.GenerateExecutable = true; //generate executable
+CompilerResults cr = charpProvider.CompileAssemblyFromFile(cp, fileName);
+if(cr.Errors.HasErrors)
+{
+  StringBuilder error = new StringBuilder();
+  error.Append("Error Compiling Expression: ");
+  foreach (CompilerError err in cr.Errors)
+  {
+    error.AppendFormat("{0}\n", err.ErrorText);
+  }
+  throw new Exception("Error Compiling Expression: " + error.ToString());
+}
+System.Reflection.Assembly a = cr.CompiledAssembly;
+var compiled = a.CreateInstance("Samples.HelloWorld");

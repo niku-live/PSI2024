@@ -1,0 +1,75 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
+#!markdown
+
+# Assembly data type
+
+#!csharp
+
+var assembly = typeof(string).Assembly;
+display(assembly.FullName);
+
+#!csharp
+
+#r "nuget:Newtonsoft.Json"
+assembly = typeof(Newtonsoft.Json.JsonConvert).Assembly;
+display(assembly.FullName);
+
+#!csharp
+
+class Person
+{
+    public string Name { get; set;}
+    public string LastName { get; set; }
+}
+
+assembly = typeof(Person).Assembly;
+display(assembly.FullName);
+
+#!csharp
+
+assembly = System.Reflection.Assembly.GetExecutingAssembly();
+display(assembly.FullName);
+
+#!markdown
+
+# Assembly data type - retrieving types
+
+#!csharp
+
+#r "nuget:Newtonsoft.Json"
+
+var assembly = typeof(Newtonsoft.Json.JsonConvert).Assembly;
+display(assembly.FullName);
+var types = assembly.GetTypes().Select(t => t.FullName);
+display(types);
+
+#!csharp
+
+var assembly = typeof(string).Assembly;
+display(assembly.FullName);
+var types = assembly.GetTypes().Select(t => t.FullName);
+display(types);
+
+#!csharp
+
+class Person
+{
+    public string Name { get; set;}
+    public string LastName { get; set; }
+}
+
+enum TestEnum
+{
+    Value1,
+    Value2
+}
+
+delegate void TestDelegate(int a, int b);
+
+assembly = System.Reflection.Assembly.GetExecutingAssembly();
+display(assembly.FullName);
+var types = assembly.GetTypes().Select(t => t.FullName);
+display(types);

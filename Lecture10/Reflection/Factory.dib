@@ -1,0 +1,71 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"}]}}
+
+#!markdown
+
+# Assembly data type - Generic Factory
+
+#!csharp
+
+public interface IMachine { string Name {get;} }
+
+public class Car: IMachine {  public string Name => "Car"; }
+public class Truck: IMachine {  public string Name => "Truck"; }
+public class UnknownMachine: IMachine {  public string Name => "Unknown"; }
+public class SportCar: IMachine {  public string Name => "Ferrari"; }
+//public class LamboCar: IMachine {  public string Name => "Lambo"; }
+//public class VazCar {  public string Name => "Vaz"; }
+
+public class MachineFactory
+{
+    Dictionary<string, Type> machines;
+    public MachineFactory() => LoadTypesICanReturn();
+
+    public IMachine CreateInstance(string description)
+    {
+        Type t = GetTypeToCreate(description) ?? typeof(UnknownMachine);
+        return Activator.CreateInstance(t) as IMachine;
+    }
+
+    private Type GetTypeToCreate(string machineName)
+    {
+        return machines.FirstOrDefault(m => m.Key.Contains(machineName)).Value;
+    }
+
+    private void LoadTypesICanReturn()
+    {
+        machines = new Dictionary<string, Type>();
+        var machineInterfaceType = typeof(IMachine);
+
+        Type[] typesInThisAssembly = System.Reflection.Assembly.GetExecutingAssembly().GetTypes();
+
+        foreach (Type type in typesInThisAssembly)
+        {                        
+            if (type.GetInterfaces().Any(i => i.Name == machineInterfaceType.Name))
+            {                
+                machines.Add(type.Name.ToLower(), type);
+            }
+        }
+    }
+}
+
+var factory = new MachineFactory();
+
+var machine = factory.CreateInstance("car");
+display(machine.Name);
+
+machine = factory.CreateInstance("truck");
+display(machine.Name);
+
+machine = factory.CreateInstance("FuturisticCar");
+display(machine.Name);
+
+machine = factory.CreateInstance("sport");
+display(machine.Name);
+
+machine = factory.CreateInstance("lambo");
+display(machine.Name);
+
+machine = factory.CreateInstance("vaz");
+display(machine.Name);
