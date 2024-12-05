@@ -37,3 +37,4 @@ All code examples should also work without any problems using Visual Studio Code
 - Lecture 11
 - Lecture 12: Deadline 2
 - [Lecture 13](Lecture13/README.md)
+- [Lecture 14](Lecture14/README.md)
